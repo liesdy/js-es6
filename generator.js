@@ -33,7 +33,8 @@ genObj.next('b');
 // 2. b
 // {value: "result", done: true}
 
-//解析： 因为next（）是执行到本次yield语句结束。而包裹着yield语句的console.log语句有一部分在yield语句后面，因此不会在本次next（）中执行，只能等到下一轮next（）才会执行??
+//解析： 因为next（）是执行到本次yield语句结束。而包裹着yield语句的console.log语句有一部分在yield语句后面，因此不会在本次next（）中执行，
+//只能等到下一轮next（）才会执行
 
 /**
  * .throw()
