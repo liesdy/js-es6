@@ -31,3 +31,30 @@ var f = new F();
 
 f.constructor === F // true
 f.constructor === RegExp // false
+
+/**
+ * instanceof
+ */
+var x = [1, 2, 3];
+var y = {};
+x instanceof Array // true
+y instanceof Object // true
+// 但其实因为查的是原型链，所以 x instanceof Object 的结果也是true
+// 注意，instanceof运算符只能用于对象，不适用原始类型的值。
+var s = 'hello';
+s instanceof String // false
+// 上面代码中，字符串不是String对象的实例（因为字符串不是对象），所以返回false。
+// 此外，对于undefined和null，instanceof运算符总是返回false。
+undefined instanceof Object // false
+null instanceof Object // false
+
+// 利用instanceof运算符可以更好地黎姐new命令
+function Fubar(foo, bar) {
+  if (this instanceof Fubar) {
+    this._foo = foo;
+    this._bar = bar;
+  } else {
+    return new Fubar(foo, bar);
+  }
+}
+// 上面代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
