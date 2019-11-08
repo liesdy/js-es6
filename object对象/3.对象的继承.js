@@ -58,3 +58,56 @@ function Fubar(foo, bar) {
   }
 }
 // 上面代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
+
+
+/**
+ * test
+ */
+function Sub(aa) {
+  this.a = aa
+}
+function Super(bb, cc = '2') {
+  this.b = bb
+  this.c = cc
+}
+Sub.prototype = Object.create(Super.prototype);
+Sub.prototype.constructor = Sub;
+var rect = new Sub('1')
+rect instanceof Sub // true
+rect instanceof Super // true
+
+rect.a // '1'
+rect.b // undefined
+// 可见Super已经加入到了sub的原型链了，但是除了prototype里面的内容，构造函数自身定义的那些东西并没有被继承
+// 所以需要通过下面的方式来实现完整的构造函数继承。
+function Sub(aa) {
+  Super.call(this)
+  this.a = aa
+}
+// 或者
+function Sub(aa) {
+  this.base = Super
+  this.base()
+  this.a = aa
+}
+
+/**
+ * 完整的例子
+ */
+function Sub(aa) {
+  this.base = Super
+  this.base()
+  this.a = aa
+}
+function Super(bb, cc = '2') {
+  // 上面的'2'是cc的默认值，如果没有参数传入则默认取'2'
+  this.b = bb
+  this.c = cc
+}
+Sub.prototype = Object.create(Super.prototype);
+Sub.prototype.constructor = Sub;
+var rect = new Sub('1')
+var rect2 = new Sub('2', '3')
+rect // Sub {b: undefined, c: "2", a: "1", base: ƒ}
+Sub // {b: undefined, c: "2", a: "2", base: ƒ}
+// 可见当构造函数和原型链上的构造函数都可以通过传参的方式构造实例时，执行传参构造函数的时候，参数只会为当前构造函数所用，原型链上的构造函数拿不到参数
