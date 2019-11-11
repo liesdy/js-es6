@@ -149,3 +149,4 @@ obj.propertyIsEnumerable('toString') // false
 // 最强的是Object.freeze。   
 // 无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 // Object.isFrozen方法用于检查一个对象是否使用了Object.freeze方法。
+// 与const相同的是，如果属性值是对象，上面这些方法只能冻结属性指向的对象，而不能冻结对象本身的内容
