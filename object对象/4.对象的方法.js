@@ -64,3 +64,68 @@ if (typeof Object.create !== 'function') {
 var obj = Object.create(null);
 obj.valueOf()
 // TypeError: Object [object Object] has no method 'valueOf'
+
+/**
+ * Object.getOwnPropertyNames()
+ * for in (in 运算符)
+ * Object.keys()
+ */
+// Object.getOwnPropertyNames()只获取实例自身的属性，不获取来自原型链的属性，且不管该属性是否可以被遍历，都会被获取
+// （for in）只获取可遍历的属性，但不区分是实例自身属性还是来自原型链  in 运算符直接返回布尔值，似乎不管是否可遍历
+var obj = {};
+'toString' in obj // true
+// Object.keys()只获取实例自身可遍历的属性
+// 题外话 一个属性是否可遍历取决于属性自身的描述对象中的enumerable属性，true为可遍历，false为不可遍历。
+// 不可遍历的属性用for...in    Object.keys   JSON.stringify()这三种方式都取不到
+
+// 如果想要获取对象的所有属性（不管是自身的还是继承的，也不管是否可枚举），可以使用下面的函数。
+function inheritedPropertyNames(obj) {
+var props = {};
+while (obj) {
+  Object.getOwnPropertyNames(obj).forEach(function (p) {
+    props[p] = true;
+  });
+  obj = Object.getPrototypeOf(obj);
+}
+return Object.getOwnPropertyNames(props);
+}
+
+
+
+
+/**
+ * Object.prototype.isPrototypeOf()
+ */
+// 实例对象的isPrototypeOf方法， 用来判断该对象是否为参数对象的原型。
+
+var o1 = {};
+var o2 = Object.create(o1);
+var o3 = Object.create(o2);
+
+o2.isPrototypeOf(o3) // true
+o1.isPrototypeOf(o3) // true
+
+
+/**
+ * Object.prototype.hasOwnProperty()
+ */
+// 对象实例的hasOwnProperty方法返回一个布尔值，用于判断某个属性定义在对象自身，还是定义在原型链上。
+Date.hasOwnProperty('length') // true
+Date.hasOwnProperty('toString') // false
+// 上面代码表明，Date.length（构造函数Date可以接受多少个参数）是Date自身的属性，Date.toString是继承的属性
+// 另外，hasOwnProperty方法是 JavaScript 之中唯一一个处理对象属性时，不会遍历原型链的方法。
+
+
+
+/**
+ * Object.prototype.__proto__
+ */
+// 实例对象的__proto__属性（ 前后各两个下划线）， 返回该对象的原型。 该属性可读写。
+
+var obj = {};
+var p = {};
+
+obj.__proto__ = p;
+Object.getPrototypeOf(obj) === p // true
+// 上面代码通过__proto__属性，将p对象设为obj对象的原型。
+// 根据语言标准，__proto__属性只有浏览器才需要部署，其他环境可以没有这个属性。它前后的两根下划线，表明它本质是一个内部属性，不应该对使用者暴露。因此，应该尽量少用这个属性，而是用Object.getPrototypeOf()和Object.setPrototypeOf()，进行原型对象的读写操作。
