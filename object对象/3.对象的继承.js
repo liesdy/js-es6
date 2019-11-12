@@ -3,7 +3,8 @@
  */
 // 构造函数具有.prototype属性，这个属性就是通过这个构造函数生成的实例的原型对象。原型对象上有的属性和方法，实例都会继承，实例自身也可以重新定义这些属性和方法。
 
-// 所有对象都有自己的原型对象（prototype）。一方面，任何一个对象，都可以充当其他对象的原型；另一方面，由于原型对象也是对象，所以它也有自己的原型。
+// 所有对象都有自己的原型对象（prototype），注意，是有原型对象，而不是都有有prototype这个属性（这个属性是函数才有的）。
+// 一方面，任何一个对象，都可以充当其他对象的原型；另一方面，由于原型对象也是对象，所以它也有自己的原型。
 // 所有对象的原型最终都可以上溯到Object.prototype，即Object构造函数的prototype属性。也就是说，所有对象都继承了Object.prototype的属性。这就是所有对象都有valueOf和toString方法的原因，因为这是从Object.prototype继承的。 
 // Object.prototype对象有没有它的原型呢？回答是Object.prototype的原型是null。null没有任何属性和方法，也没有自己的原型。因此，原型链的尽头就是null。
 
@@ -35,20 +36,21 @@ f.constructor === RegExp // false
 /**
  * instanceof
  */
+// 运算符的左边是实例对象， 右边是构造函数
 var x = [1, 2, 3];
 var y = {};
 x instanceof Array // true
 y instanceof Object // true
 // 但其实因为查的是原型链，所以 x instanceof Object 的结果也是true
-// 注意，instanceof运算符只能用于对象，不适用原始类型的值。
+// 注意，instanceof运算符只能用于对象，不适用原始类型的值。如下
 var s = 'hello';
 s instanceof String // false
-// 上面代码中，字符串不是String对象的实例（因为字符串不是对象），所以返回false。
 // 此外，对于undefined和null，instanceof运算符总是返回false。
 undefined instanceof Object // false
 null instanceof Object // false
 
 // 利用instanceof运算符可以更好地黎姐new命令
+// 下面的代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
 function Fubar(foo, bar) {
   if (this instanceof Fubar) {
     this._foo = foo;
@@ -57,8 +59,6 @@ function Fubar(foo, bar) {
     return new Fubar(foo, bar);
   }
 }
-// 上面代码使用instanceof运算符，在函数体内部判断this关键字是否为构造函数Fubar的实例。如果不是，就表明忘了加new命令。
-
 
 /**
  * test
@@ -76,10 +76,11 @@ var rect = new Sub('1')
 rect instanceof Sub // true
 rect instanceof Super // true
 
+rect // {a: "1"}
 rect.a // '1'
-rect.b // undefined
-// 可见Super已经加入到了sub的原型链了，但是除了prototype里面的内容，构造函数自身定义的那些东西并没有被继承
-// 所以需要通过下面的方式来实现完整的构造函数继承。
+rect.c // undefined
+// 可见Super已经加入到了sub的原型链了，但是除了prototype里面的内容，构造函数Super定义的那些属性并没有被继承
+// 所以需要通过下面的方式来实现的构造函数继承。
 function Sub(aa) {
   Super.call(this)
   this.a = aa

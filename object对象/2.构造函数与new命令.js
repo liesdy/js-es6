@@ -57,7 +57,6 @@
  function getMessage() {
    return 'this is a message';
  }
-
  var msg = new getMessage();
 
  msg // {}
@@ -71,9 +70,10 @@
  function f() {
    console.log(new.target === f);
  }
-
  f() // false
  new f() // true
+
+ 
 
  /**
   * Object.create() 创建实例对象

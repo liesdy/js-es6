@@ -4,17 +4,21 @@
  * instanceof运算符用来验证， 一个对象是否为指定的构造函数的实例。
  * 
  * prototype[ˈprəʊtətaɪp] 原型，雏形，最初形态
- * property 所有物，财产，不动产，房产，庄园
+ * property 所有物，财产，不动产，房产，庄园，属性
  * own 自己的，本人的
  */
 
+ /**
+  * 涉及内容
+  */
 // 面向对象编程
 // 对象属性的描述对象
-// 包装对象
 // 数据类型转换
 
 // Object本身是一个函数， 可以当作工具方法使用， 将任意值转为对象。 这个方法常用于保证某个值一定是对象，如果参数本身就是对象则返回自身，如果参数是原始类型的值， Object方法将其转为对应的包装对象的实例（ 参见《 原始类型的包装对象》 一章）。
 var obj = Object(1);
+// 这句实际效果相当于 
+var obj = new Number(1);
 obj instanceof Object // true
 obj instanceof Number // true
 
@@ -28,9 +32,12 @@ var o2 = new Object(o1);
 o1 === o2 // true
 
 var obj = new Object(123);
+// 实际效果相当于（语义不同）
+var obj = Object(123);
+// 上面这行等价于
+var obj = new Number(123)
+// 因此
 obj instanceof Number // true
-
-
 
 
 /**
@@ -45,7 +52,9 @@ Object.getOwnPropertyNames(a) // ["0", "1", "length"]
 // 一般情况下， 几乎总是使用Object.keys方法， 遍历对象的属性。
 
 
-
+/**
+ * Object的实例方法
+ */
 // Object实例方法可以在实例上用自定义方法覆盖
 
 Object.prototype.valueOf()
@@ -90,7 +99,7 @@ obj.toString() // "[object Object]"
 // 由于实例对象可能会自定义toString方法， 覆盖掉Object.prototype.toString方法， 所以如果为了判断对象类型的话，最好直接使用Object.prototype.toString方法，配合call方法帮助我们判断这个值的类型
 Object.prototype.toString.call(value)
 
-// 不同数据类型的Object.prototype.toString方法返回值如下。
+// 不同数据类型的Object.prototype.toString方法（call 加持）返回值如下。
 
 // 数值： 返回[object Number]。
 // 字符串： 返回[object String]。
@@ -116,10 +125,33 @@ var date = new Date();
 date.toString() // "Tue Jan 01 2018 12:01:33 GMT+0800 (CST)"
 date.toLocaleString() // "1/01/2018, 12:01:33 PM"
 
+
+
+/**
+ * Object.prototype.hasOwnProperty
+ */
 // Object.prototype.hasOwnProperty方法接受一个字符串作为参数， 返回一个布尔值， 表示该实例对象自身是否具有该属性。
 var obj = {
   p: 123
 };
-
 obj.hasOwnProperty('p') // true
 obj.hasOwnProperty('toString') // false
+
+/**
+ * 包装对象
+ */
+// 所谓“ 包装对象”， 指的是与数值、 字符串、 布尔值分别相对应的Number、 String、 Boolean三个原生对象。 这三个原生对象可以把原始类型的值变成（ 包装成） 对象。
+
+var v1 = new Number(123);
+var v2 = new String('abc');
+var v3 = new Boolean(true);
+
+typeof v1 // "object"
+typeof v2 // "object"
+typeof v3 // "object"
+
+v1 === 123 // false
+v2 === 'abc' // false
+v3 === true // false
+// 上面代码中， 基于原始类型的值， 生成了三个对应的包装对象。 可以看到， v1、 v2、 v3都是对象， 且与对应的简单类型值不相等。
+// Number、 String和Boolean这三个原生对象， 如果不作为构造函数调用（ 即调用时不加new）， 而是作为普通函数调用， 常常用于将任意类型的值转为数值、 字符串和布尔值。

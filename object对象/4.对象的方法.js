@@ -33,6 +33,7 @@ var f = new F();
 // 等同于
 var f = Object.setPrototypeOf({}, F.prototype);
 F.call(f);
+// 由此根据我个人推测，setPrototypeOf方法中的this是指向第一个参数的
 
 /**
  * Object.create(obj)

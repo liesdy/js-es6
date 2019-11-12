@@ -17,12 +17,7 @@
 
 // configurable 是一个布尔值， 表示可配置性， 默认为true。 如果设为false， 将阻止某些操作改写该属性， 比如无法删除该属性， 也不得改变该属性的属性描述对象，也就是说， configurable属性控制了属性描述对象的 ！部分 可写性。 configurable为false时，enumerable和configurable都不能被修改了, ！writable ！可以从true改成false但是从false改为true则会报错
 // 另外  configurable 如果是false  则这个属性是不能被 ！delete命令 删除的
-var obj = Object.defineProperty({}, 'p', {
-  value: 1,
-  writable: true,
-  enumerable: false,
-  configurable: false
-});
+
 // writable 和 configurable 这两个属性，这两个属性只要有一个是true。就可以使用Object.defineProperty(obj, 'p', {value: 2})这种方式更改obj的属性'p'
 // 而能否通过 obj.p = xxx 的方式来更改属性，则取决于 writable 属性，与  configurable 没有关系
 
@@ -149,4 +144,4 @@ obj.propertyIsEnumerable('toString') // false
 // 最强的是Object.freeze。   
 // 无法添加新属性、无法删除旧属性、也无法改变属性的值，使得这个对象实际上变成了常量。
 // Object.isFrozen方法用于检查一个对象是否使用了Object.freeze方法。
-// 与const相同的是，如果属性值是对象，上面这些方法只能冻结属性指向的对象，而不能冻结对象本身的内容
+// 与const相同的是，如果属性值是对象，上面这些方法只能冻结属性指向的对象的内存地址，而不能冻结对象本身的内容
