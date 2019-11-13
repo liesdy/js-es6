@@ -3,7 +3,7 @@
  */
 // 构造函数具有.prototype属性，这个属性就是通过这个构造函数生成的实例的原型对象。原型对象上有的属性和方法，实例都会继承，实例自身也可以重新定义这些属性和方法。
 
-// 所有对象都有自己的原型对象（prototype），注意，是有原型对象，而不是都有有prototype这个属性（这个属性是函数才有的）。
+// 所有对象都有自己的原型对象（prototype），注意，是有原型对象，而不是都有prototype这个属性（这个属性是函数才有的）。
 // 一方面，任何一个对象，都可以充当其他对象的原型；另一方面，由于原型对象也是对象，所以它也有自己的原型。
 // 所有对象的原型最终都可以上溯到Object.prototype，即Object构造函数的prototype属性。也就是说，所有对象都继承了Object.prototype的属性。这就是所有对象都有valueOf和toString方法的原因，因为这是从Object.prototype继承的。 
 // Object.prototype对象有没有它的原型呢？回答是Object.prototype的原型是null。null没有任何属性和方法，也没有自己的原型。因此，原型链的尽头就是null。
