@@ -34,7 +34,7 @@ f.constructor === F // true
 f.constructor === RegExp // false
 
 /**
- * instanceof
+ * instanceof命令（运算符）
  */
 // 运算符的左边是实例对象， 右边是构造函数
 var x = [1, 2, 3];
