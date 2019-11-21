@@ -66,6 +66,19 @@ var obj = Object.create(null);
 obj.valueOf()
 // TypeError: Object [object Object] has no method 'valueOf'
 
+// 补充
+// create方法可以接受第二个参数
+Object.create(proto, [propertiesObject])
+// proto: 必须。 表示新建对象的原型对象， 即该参数会被赋值到目标对象(即新对象， 或说是最后返回的对象) 的原型上。 该参数可以是null， 对象， 函数的prototype属性（ 创建空的对象时需传null, 否则会抛出TypeError异常）。
+// propertiesObject: 可选。 添加到新创建对象的可枚举属性（ 即其自身的属性， 而不是原型链上的枚举属性） 对象的属性描述符以及相应的属性名称。 这些属性对应Object.defineProperties() 的第二个参数。
+
+// 作者： liwuwuzhi
+// 链接： https: //www.jianshu.com/p/28d85bebe599
+//   来源： 简书
+// 著作权归作者所有。 商业转载请联系作者获得授权， 非商业转载请注明出处。
+
+
+
 /**
  * Object.getOwnPropertyNames()
  * for in (in 运算符)
