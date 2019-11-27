@@ -94,7 +94,7 @@ class B extends A {
   }
 }
 
-// super作为对象时，在普通方法中，指向父类的原型对象；在静态方法中，指向父类。
+// super作为对象时，在普通方法中，指向父类的原型对象；在静态方法中，指向父类。 ...这段内容也许有问题
 class A {
   p() {
     return 2;
@@ -109,16 +109,19 @@ class B extends A {
 }
 
 let b = new B();
-// 上面代码中， 子类B当中的super.p()， 就是将super当作一个对象使用。 这时， super在普通方法之中， 指向A.prototype， 所以super.p() 就相当于A.prototype.p()。
+// 上面代码中， 子类B当中的super.p()， 就是将super当作一个对象使用。 这时， super在普通方法之中， 指向A.prototype， 所以super.p() 就相当于A.prototype.p()。   ...这段内容也许有问题
+/**
+ * 我个人的黎姐，根据之前main.js中的实测，p是部署在类中根环境的 ！方法 ，而方法必然是在prototype上的，所以这边引用方法自然也是prototype上的
+ */
 
 
-// 这里需要注意， 由于super指向父类的原型对象， 所以定义在父类实例上的方法或属性， 是无法通过super调用的。
+// 这里需要注意， 由于super指向父类的原型对象， 所以定义在父类实例上的方法或属性， 是无法通过super调用的。  
+// ...上面这段内容也许有问题
 class A {
   constructor() {
     this.p = 2;
   }
 }
-
 class B extends A {
   get m() {
     return super.p;
@@ -128,6 +131,19 @@ class B extends A {
 let b = new B();
 b.m // undefined
 // 上面代码中， p是父类A实例的属性， super.p就引用不到它。
+// 如果属性定义在父类的原型对象上， super就可以取到
+class A {}
+A.prototype.x = 2;
+
+class B extends A {
+  constructor() {
+    super();
+    console.log(super.x) // 2
+  }
+}
+
+let b = new B();
+// 上面代码中， 属性x是定义在A.prototype上面的， 所以super.x可以取到它的值。
 
 // ES6 规定， 在子类普通方法中通过super调用父类的方法时， 方法内部的this指向当前的子类实例。
 class A {
@@ -222,3 +238,38 @@ class B extends A {
 
 B.x = 3;
 B.m() // 3
+
+
+/**
+ * 类的 prototype 属性和__proto__属性
+ */
+// 大多数浏览器的 ES5 实现之中， 每一个对象都有__proto__属性， 指向对应的构造函数的prototype属性。 Class 作为构造函数的语法糖， 同时有prototype属性和__proto__属性， 因此同时存在两条继承链。
+
+// （ 1） 子类的__proto__属性， 表示构造函数的继承， 总是指向父类。
+
+// （ 2） 子类prototype属性的__proto__属性， 表示方法的继承， 总是指向父类的prototype属性。
+class A {}
+
+class B extends A {}
+
+B.__proto__ === A // true
+B.prototype.__proto__ === A.prototype // true
+
+
+// 继承Object的子类， 有一个行为差异。
+class NewObj extends Object {
+  constructor() {
+    super(...arguments);
+  }
+}
+var o = new NewObj({
+  attr: true
+});
+o.attr === true // false
+// 上面代码中， NewObj继承了Object， 但是无法通过super方法向父类Object传参。 这是因为 ES6 改变了Object构造函数的行为， 一旦发现Object方法不是通过new Object() 这种形式调用， ES6 规定Object构造函数会忽略参数。
+
+
+/**
+ * es5中的构造方法无法继承原生的构造函数
+ * es6中的类可以
+ */

@@ -10,7 +10,7 @@ class Point {
 }
 
 /**
- * ES6 的类， 完全可以看作构造函数的另一种写法。
+ * ES6 的类， 可以看作构造函数的另一种写法。
  */
 class Point {
   // ...
@@ -36,6 +36,9 @@ Point.prototype.constructor === Point // true
  *!!!!!!!类的内部所有定义的方法， 都是不可枚举的（ non - enumerable） 这一点与 ES5 的行为不一致。
  */
 
+ /**
+  * 这部分内容有变动，具体结合之后的新写法来看...反正很恶心
+  */
 //  实例的属性除非显式定义在其本身（ 即定义在this对象上）， 否则都是定义在原型上（ 即定义在class上）。
 //定义类
 class Point {
@@ -56,6 +59,7 @@ point.hasOwnProperty('x') // true
 point.hasOwnProperty('y') // true
 point.hasOwnProperty('toString') // false
 point.__proto__.hasOwnProperty('toString') // true
+// 根据下面的实测结果是，这种方式定义的方法都在prototype上面，对象则都在实例上面，和有没有this好像没什么关系
 
 /**
  * 与函数一样， 类也可以使用表达式的形式定义。
@@ -90,13 +94,27 @@ class Foo {
     return 'hello';
   }
 }
-// 注意，如果静态方法包含this关键字，这个this指的是类，而不是实例。
-
 Foo.classMethod() // 'hello'
-
 var foo = new Foo();
 foo.classMethod()
 // TypeError: foo.classMethod is not a function
+
+
+
+// 注意，如果静态方法包含this关键字，这个this指的是类，而不是实例。
+class Foo {
+  static bar() {
+    this.baz();
+  }
+  static baz() {
+    console.log('hello');
+  }
+  baz() {
+    console.log('world');
+  }
+}
+Foo.bar() // hello
+
 
 // 父类的静态方法， 可以被子类继承。
 
@@ -126,6 +144,66 @@ class IncreasingCounter {
 }
 // 上面代码中， 实例属性_count与取值函数value() 和increment() 方法， 处于同一个层级。 这时， 不需要在实例属性前面加上this。
 // 这种新写法的好处是， 所有实例对象自身的属性都定义在类的头部， 看上去比较整齐， 一眼就能看出这个类有哪些实例属性。也比较简洁
+// 以下是对比测试
+class Point {
+  _t = { a: '1' }
+  z = { b: '2' }
+
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  w = 3
+
+  toString() {
+    return '(' + this.x + ', ' + this.y + ')';
+  }
+  toTest() {
+    console.log('1')
+  }
+  static toTest2 () {
+    console.log('2')
+  }
+  static sa = '44'
+
+}
+var point = new Point(2, 3);
+var point2 = new Point(2, 3);
+point.z === point2.z // false
+point.toSting === point2.toSting // true
+point.toTest === point2.toTest // true
+point.__proto__ 
+// {
+//   constructor: ...,
+//   toString: ...,
+//   toTest: ...
+// }
+point.hasOwnProperty('toString') // false
+point.hasOwnProperty('toTest') // false
+point.hasOwnProperty('x') // true
+point.hasOwnProperty('z') // true
+// 实测下来发现，部署在根环境的一般属性都变成了实例属性，而部署在根环境的方法全都在实例的原型对象上.....
+// .........狗币.....所以这种新写法把之前说的没有显示用this申明的属性都放到prototype上的原则放哪里去了。我要放到prototype上还要用别的方法.........wcnm
+// 如果要给类的原型添加属性。最简单的方法还是
+Point.prototype.aa = 2
+// 这种写法
+// 另外由于 toTest2 方法和 sa 属性是静态化的，因此可以直接通过
+Point.toTest2 // 
+Point.sa // '44'
+// 来获取
+
+// 对应的对象和构造函数给原型对象上添加的属性的方法
+function Animal(name) {
+  this.name = name;
+}
+Animal.prototype.color = 'white';
+
+var cat1 = new Animal('大毛');
+var cat2 = new Animal('二毛');
+cat1.color === cat2.color // true
+cat1.color // 'white'
+cat2.color // 'white'
+
 
 /**
  * 静态属性
@@ -137,7 +215,7 @@ class Foo {}
 Foo.prop = 1;
 Foo.prop // 1
 
-// 后期可能会将使用static前缀标注静态属性的方式实现，虽然不知道是什么时候
+// 后期可能会将使用static前缀标注静态属性的方式实现，虽然不知道是什么时候（在现在版本的谷歌浏览器中已经可用）
 
 
 /**
@@ -184,7 +262,7 @@ class Counter {
   }
 
   get #x() {
-    return# xValue;
+    return #xValue;
   }
   set #x(value) {
     this.#xValue = value;
@@ -203,9 +281,9 @@ Foo.getPrivateValue(new Foo()); // 42
 // 私有属性和私有方法前面，也可以加上static关键字，表示这是一个静态的私有属性或私有方法。
 class FakeMath {
   static PI = 22 / 7;
-  static# totallyRandomNumber = 4;
+  static #totallyRandomNumber = 4;
 
-  static# computeRandomNumber() {
+  static #computeRandomNumber() {
     return FakeMath.#totallyRandomNumber;
   }
 
