@@ -143,7 +143,19 @@ export { es6 as default } from './someModule';
  * 注意
  * export *命令会忽略模块输出的default。
  */
+// circleplus.js
 
+export * from 'circle';
+export var e = 2.71828182846;
+export default function (x) {
+  return Math.exp(x);
+}
+// 加载上面模块的写法如下。
+// main.js
+import * as math from 'circleplus';
+import exp from 'circleplus';
+console.log(exp(math.e));
+// 上面代码中的import exp表示， 将circleplus模块的默认方法加载为exp方法。
 
  /**
   * import( )
